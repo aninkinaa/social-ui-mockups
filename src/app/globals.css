@@ -1,3 +1,6 @@
+/* Import font SF Pro dari CDN */
+@import url('https://fonts.cdnfonts.com/css/sf-pro-display');
+
 @import "tailwindcss";
 
 :root {
@@ -8,8 +11,8 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Paksa Tailwind pake SF Pro tiap kali manggil class font-sans */
+  --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -22,5 +25,4 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }
