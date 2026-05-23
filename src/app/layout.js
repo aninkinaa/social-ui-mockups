@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Fake Chat LINE",
+  title: "Sosial Media Fake Generator",
   description: "Bikin fake chat buat seru-seruan",
 };
 
