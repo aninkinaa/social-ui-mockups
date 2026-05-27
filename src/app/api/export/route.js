@@ -1,9 +1,21 @@
 import puppeteer from "puppeteer";
 import { NextResponse } from "next/server";
+import fs from 'fs';
+import path from 'path';
+
+function getFontBase64(filename) {
+    try {
+        const filePath = path.join(process.cwd(), 'public', filename);
+        return fs.readFileSync(filePath).toString('base64');
+    } catch (e) {
+        console.error(`Font file not found: ${filename}`, e);
+        return "";
+    }
+}
 
 export async function POST(req) {
   try {
-    const { html, format, width, height, baseUrl } = await req.json();
+    const { html, format, width, height } = await req.json();
 
     const browser = await puppeteer.launch({
       executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
@@ -22,8 +34,12 @@ export async function POST(req) {
     await page.setViewport({
       width: width || 393,
       height: height || 852,
-      deviceScaleFactor: 4, // Retina display sharpness
+      deviceScaleFactor: 4,
     });
+
+    const regular = getFontBase64('SF-Pro-Text-Regular.otf');
+    const medium = getFontBase64('SF-Pro-Text-Medium.otf');
+    const bold = getFontBase64('SF-Pro-Text-Bold.otf');
 
     const fullHtml = `
       <!DOCTYPE html>
@@ -32,63 +48,30 @@ export async function POST(req) {
           <meta charset="UTF-8">
           <script src="https://cdn.tailwindcss.com"></script>
           <style>
-              /* 1. Suntikkan font dengan URL absolute menggunakan baseUrl */
               @font-face {
                 font-family: 'SF Pro Text';
-                src: url('${baseUrl}/SF-Pro-Text-Regular.otf') format('opentype');
+                src: url('data:font/opentype;base64,${regular}') format('opentype');
                 font-weight: 400;
-                font-style: normal;
               }
               @font-face {
                 font-family: 'SF Pro Text';
-                src: url('${baseUrl}/SF-Pro-Text-Medium.otf') format('opentype');
+                src: url('data:font/opentype;base64,${medium}') format('opentype');
                 font-weight: 500;
-                font-style: normal;
               }
               @font-face {
                 font-family: 'SF Pro Text';
-                src: url('${baseUrl}/SF-Pro-Text-Semibold.otf') format('opentype');
-                font-weight: 600;
-                font-style: normal;
-              }
-              @font-face {
-                font-family: 'SF Pro Text';
-                src: url('${baseUrl}/SF-Pro-Text-Bold.otf') format('opentype');
+                src: url('data:font/opentype;base64,${bold}') format('opentype');
                 font-weight: 700;
-                font-style: normal;
-              }
-              @font-face {
-                font-family: 'SF Pro Text';
-                src: url('${baseUrl}/SF-Pro-Text-Heavy.otf') format('opentype');
-                font-weight: 800;
-                font-style: normal;
               }
 
-              /* 2. Tambahkan antialiasing seperti di file CSS utama kamu */
               body { 
                   margin: 0; 
                   padding: 0; 
-                  font-family: 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+                  font-family: 'SF Pro Text', sans-serif;
                   background: #000;
                   -webkit-font-smoothing: antialiased;
-                  -moz-osx-font-smoothing: grayscale;
-                  text-rendering: optimizeLegibility;
               }
-              .export-hide { display: none !important; }
-              .export-show { display: flex !important; }
           </style>
-          <script>
-            // 3. Paksa Tailwind CDN untuk memakai font SF Pro Text sebagai default sans
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: { 
-                            sans: ['"SF Pro Text"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'] 
-                        }
-                    }
-                }
-            }
-          </script>
       </head>
       <body>
           ${html}
@@ -97,8 +80,7 @@ export async function POST(req) {
     `;
 
     await page.setContent(fullHtml, { waitUntil: ["load", "networkidle0"] });
-
-    await new Promise(r => setTimeout(r, 500));
+    await page.evaluateHandle('document.fonts.ready');
 
     const element = await page.$("body > div");
     

@@ -16,7 +16,6 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 COPY package*.json ./
 RUN npm install
 
-# 5. Copy sisa kode
 COPY . .
 RUN npm run build
 
