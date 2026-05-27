@@ -5,10 +5,16 @@ export const metadata = {
   description: "Bikin fake chat buat seru-seruan",
 };
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+}
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="h-full antialiased">
-      {/* Tambahin class font-sans di sini biar narik settingan Tailwind */}
       <body className="min-h-full flex flex-col font-sans">
         {children}
       </body>

@@ -2,20 +2,25 @@ import { useState, useRef } from "react";
 
 export function useTextLayers() {
   const [texts, setTexts] = useState([]);
-  const [inputText, setInputText] = useState("");
   const [textColor, setTextColor] = useState("#ffffff");
   const [activeTextId, setActiveTextId] = useState(null);
 
   const dragInfo = useRef({ isDragging: false, startX: 0, startY: 0 });
 
   const addText = () => {
-    if (!inputText.trim()) return;
     const newId = Date.now();
-    setTexts([
-      ...texts,
-      { id: newId, text: inputText, x: 0, y: 0, color: textColor, scale: 1, rotation: 0 },
+    setTexts((prev) => [
+      ...prev,
+      { 
+        id: newId, 
+        text: "New Text",
+        x: 0, 
+        y: 0, 
+        color: textColor, 
+        scale: 1, 
+        rotation: 0 
+      },
     ]);
-    setInputText("");
     setActiveTextId(newId);
   };
 
@@ -67,8 +72,6 @@ export function useTextLayers() {
 
   return {
     texts,
-    inputText,
-    setInputText,
     textColor,
     setTextColor,
     activeTextId,
@@ -76,6 +79,10 @@ export function useTextLayers() {
     addText,
     removeText,
     updateTextProps,
-    handlers: { onPointerDown, onPointerMove, onPointerUp }
+    handlers: { 
+      onPointerDown, 
+      onPointerMove, 
+      onPointerUp 
+    }
   };
 }

@@ -21,21 +21,43 @@ export default function AvatarInput({ value, onChange, className = "w-12 h-12" }
         setRawImage(null);
     };
 
+    const handleRemove = (e) => {
+        e.preventDefault(); 
+        e.stopPropagation();
+        onChange("");
+    };
+
+    const isCustomPhoto = value && value !== DEFAULT_AVATAR;
+
     return (
         <>
-            <label className={`relative z-[999] shrink-0 rounded-full overflow-hidden border-2 border-[#3f3f46] cursor-pointer block group ${className}`}>
-                <img
-                    src={value || DEFAULT_AVATAR} 
-                    alt="Avatar" 
-                    className="w-full h-full object-cover group-hover:opacity-50 transition-opacity" 
-                />
-                <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleFileSelect}
-                />
-            </label>
+            <div className={`relative shrink-0 ${className}`}>
+                <label className="relative z-10 w-full h-full rounded-full overflow-hidden border-2 border-[#3f3f46] cursor-pointer block group">
+                    <img
+                        src={value || DEFAULT_AVATAR} 
+                        alt="Avatar" 
+                        className="w-full h-full object-cover group-hover:opacity-50 transition-opacity" 
+                    />
+                    
+                    <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleFileSelect}
+                    />
+                </label>
+
+                {isCustomPhoto && (
+                    <button 
+                        onClick={handleRemove}
+                        type="button"
+                        className="absolute -top-1 -right-1 z-20 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-md hover:bg-red-600 hover:scale-110 transition-all cursor-pointer"
+                        title="Remove Photo"
+                    >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                )}
+            </div>
 
             {rawImage && (
                 <AvatarCropper

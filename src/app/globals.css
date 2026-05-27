@@ -55,7 +55,6 @@
   --color-brand: var(--brand);
   --color-brand-hover: var(--brand-hover);
   
-  /* 2. Ubah font default Tailwind jadi SF Pro Text */
   --font-sans: "SF Pro Text", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -72,4 +71,5 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
 }

@@ -17,7 +17,7 @@ export function useArrayManager(initialData) {
         if (activeId === id) setActiveId(null);
     };
 
-    return { items, activeId, setActiveId, updateItem, addItem, removeItem };
+    return { items, setItems, activeId, setActiveId, updateItem, addItem, removeItem };
 }
 
 export default useArrayManager;

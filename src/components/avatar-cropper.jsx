@@ -1,7 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 
-export default function AvatarCropper({ imageSrc, onSave, onCancel }) {
+export default function AvatarCropper({ 
+    imageSrc, 
+    onSave, 
+    onCancel,
+    cropWidth = 250,   
+    cropHeight = 250,  
+    isCircular = true 
+}) {
     const [mounted, setMounted] = useState(false);
     const canvasRef = useRef(null);
     const imageRef = useRef(null);
@@ -28,15 +35,14 @@ export default function AvatarCropper({ imageSrc, onSave, onCancel }) {
         }
     }, [imageSrc]);
 
-    const size = 250;
     let maxDx = 0;
     let maxDy = 0;
 
     if (imgSize.w && imgSize.h) {
-        const baseScale = Math.max(size / imgSize.w, size / imgSize.h);
+        const baseScale = Math.max(cropWidth / imgSize.w, cropHeight / imgSize.h);
         const finalScale = baseScale * scale;
-        maxDx = Math.max(0, (imgSize.w * finalScale - size) / 2);
-        maxDy = Math.max(0, (imgSize.h * finalScale - size) / 2);
+        maxDx = Math.max(0, (imgSize.w * finalScale - cropWidth) / 2);
+        maxDy = Math.max(0, (imgSize.h * finalScale - cropHeight) / 2);
     }
 
     useEffect(() => {
@@ -61,17 +67,17 @@ export default function AvatarCropper({ imageSrc, onSave, onCancel }) {
         const ctx = canvas.getContext("2d");
         const img = imageRef.current;
 
-        canvas.width = size;
-        canvas.height = size;
-        ctx.clearRect(0, 0, size, size);
+        canvas.width = cropWidth;
+        canvas.height = cropHeight;
+        ctx.clearRect(0, 0, cropWidth, cropHeight);
 
-        const baseScale = Math.max(size / img.width, size / img.height);
+        const baseScale = Math.max(cropWidth / img.width, cropHeight / img.height);
         const finalScale = baseScale * scale;
         const drawWidth = img.width * finalScale;
         const drawHeight = img.height * finalScale;
 
-        const dx = (size - drawWidth) / 2 + position.x;
-        const dy = (size - drawHeight) / 2 + position.y;
+        const dx = (cropWidth - drawWidth) / 2 + position.x;
+        const dy = (cropHeight - drawHeight) / 2 + position.y;
 
         ctx.drawImage(img, dx, dy, drawWidth, drawHeight);
     };
@@ -89,71 +95,44 @@ export default function AvatarCropper({ imageSrc, onSave, onCancel }) {
         <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
             <div className="bg-[#18181b] border border-[#27272a] p-6 rounded-2xl w-full max-w-[340px] flex flex-col gap-5 shadow-2xl relative">
                 <div>
-                    <h3 className="text-white font-bold text-center text-[16px]">Adjust Profile Photo</h3>
+                    <h3 className="text-white font-bold text-center text-[16px]">Adjust Photo</h3>
                     <p className="text-xs text-neutral-400 text-center mt-1">Use sliders to adjust</p>
                 </div>
 
                 <div className="flex justify-center">
-                    <div className="w-[250px] h-[250px] rounded-full overflow-hidden border-2 border-[#3f3f46] shadow-inner bg-black">
-                        <canvas ref={canvasRef} className="block w-full h-full" />
+                    <div 
+                        style={{ width: cropWidth, height: cropHeight, maxWidth: '100%', maxHeight: '40vh' }}
+                        className={`overflow-hidden border-2 border-[#3f3f46] shadow-inner bg-black ${isCircular ? 'rounded-full' : 'rounded-md'}`}
+                    >
+                        <canvas ref={canvasRef} className="block w-full h-full object-cover" />
                     </div>
                 </div>
 
                 {/* Controls Area */}
                 <div className="flex flex-col gap-3">
-                    {/* Zoom Slider */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-medium text-neutral-300 flex justify-between">
                             <span>Zoom</span>
                             <span>{Math.round(scale * 100)}%</span>
                         </label>
-                        <input
-                            type="range"
-                            min="1"
-                            max="3"
-                            step="0.05"
-                            value={scale}
-                            onChange={(e) => setScale(parseFloat(e.target.value))}
-                            className="w-full accent-indigo-500 cursor-pointer"
-                        />
+                        <input type="range" min="1" max="3" step="0.05" value={scale} onChange={(e) => setScale(parseFloat(e.target.value))} className="w-full accent-indigo-500 cursor-pointer" />
                     </div>
 
-                    {/* X-Axis Slider (Left / Right) */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-medium text-neutral-300 flex justify-between">
                             <span>Pan Left / Right</span>
                         </label>
-                        <input
-                            type="range"
-                            min={-maxDx}
-                            max={maxDx}
-                            step="1"
-                            value={position.x}
-                            onChange={(e) => setPosition(prev => ({ ...prev, x: parseFloat(e.target.value) }))}
-                            disabled={maxDx === 0}
-                            className="w-full accent-indigo-500 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                        />
+                        <input type="range" min={-maxDx} max={maxDx} step="1" value={position.x} onChange={(e) => setPosition(prev => ({ ...prev, x: parseFloat(e.target.value) }))} disabled={maxDx === 0} className="w-full accent-indigo-500 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" />
                     </div>
 
-                    {/* Y-Axis Slider (Up / Down) */}
                     <div className="flex flex-col gap-1.5">
                         <label className="text-xs font-medium text-neutral-300 flex justify-between">
                             <span>Pan Up / Down</span>
                         </label>
-                        <input
-                            type="range"
-                            min={-maxDy}
-                            max={maxDy}
-                            step="1"
-                            value={position.y}
-                            onChange={(e) => setPosition(prev => ({ ...prev, y: parseFloat(e.target.value) }))}
-                            disabled={maxDy === 0}
-                            className="w-full accent-indigo-500 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                        />
+                        <input type="range" min={-maxDy} max={maxDy} step="1" value={position.y} onChange={(e) => setPosition(prev => ({ ...prev, y: parseFloat(e.target.value) }))} disabled={maxDy === 0} className="w-full accent-indigo-500 cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed" />
                     </div>
                 </div>
 
-                {/* Actions */}
                 <div className="flex gap-3 mt-1">
                     <button onClick={onCancel} className="flex-1 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#27272a] hover:bg-[#3f3f46] transition-colors">
                         Cancel

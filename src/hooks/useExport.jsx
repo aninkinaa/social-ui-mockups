@@ -1,91 +1,104 @@
+import { useState } from "react";
 import { toPng, toJpeg } from "html-to-image";
 
 export function useExport() {
-  const downloadImage = async (ref, format = "png", filename = "export") => {
+  const [isExporting, setIsExporting] = useState(false);
+
+  const downloadImage = async (ref, format = "png", filename = "export", method = "client") => {
     if (!ref.current) return;
-    const elementsToHide = ref.current.querySelectorAll(".export-hide");
-    const elementsToShow = ref.current.querySelectorAll(".export-show");
-    const scrollElements = ref.current.querySelectorAll(".overflow-y-auto, .overflow-x-auto, .custom-scrollbar");
-
-    elementsToHide.forEach((el) => el.style.setProperty("display", "none", "important"));
-    elementsToShow.forEach((el) => el.style.setProperty("display", "flex", "important"));
-
-    elementsToHide.forEach((el) => el.style.setProperty("display", "none", "important"));
-    elementsToShow.forEach((el) => el.style.setProperty("display", "flex", "important"));
-    scrollElements.forEach((el) => el.style.setProperty("overflow", "hidden", "important"));
-
-    await new Promise((resolve) => setTimeout(resolve, 300));
-
-    const exportWithRatio = async (ratio) => {
-      const options = {
-        quality: 1.0,
-        pixelRatio: ratio,
-        useCORS: true,
-        skipFonts: false,
-        style: {
-          borderRadius: "0px",
-          boxShadow: "none",
-          outline: "none",
-          transform: "scale(1)",
-          margin: "0",
-          WebkitFontSmoothing: "antialiased",
-          MozOsxFontSmoothing: "grayscale"
-        },
-        cacheBust: true,
-        filter: (node) => {
-          return !node.classList?.contains('export-hide');
-        }
-      };
-
-      await toPng(ref.current, options).catch(() => { });
-      await new Promise((resolve) => setTimeout(resolve, 150));
-
-      return format === "jpg"
-        ? await toJpeg(ref.current, options)
-        : await toPng(ref.current, options);
-    };
+    setIsExporting(true);
 
     try {
-      let dataUrl;
-      try {
-        dataUrl = await exportWithRatio(3);
-      } catch (err1) {
-        console.warn("Failed to export with pixelRatio 3, trying pixelRatio 2...");
-        try {
-          dataUrl = await exportWithRatio(2);
-        } catch (err2) {
-          console.warn("Failed to export with pixelRatio 2, trying pixelRatio 1...");
-          dataUrl = await exportWithRatio(1);
-        }
+      if (method === "server") {
+        const clone = ref.current.cloneNode(true);
+        
+        const originalInputs = ref.current.querySelectorAll("input, textarea");
+        const clonedInputs = clone.querySelectorAll("input, textarea");
+        originalInputs.forEach((input, index) => {
+            if (clonedInputs[index]) {
+                clonedInputs[index].setAttribute("value", input.value);
+            }
+        });
+        
+        const elementsToHide = clone.querySelectorAll(".export-hide");
+        elementsToHide.forEach((el) => el.remove());
+        
+        const elementsToShow = clone.querySelectorAll(".export-show");
+        elementsToShow.forEach((el) => {
+          el.style.setProperty("display", "flex", "important");
+          el.style.setProperty("visibility", "visible", "important");
+          el.style.setProperty("opacity", "1", "important");
+        });
+
+        const htmlContent = clone.outerHTML;
+        const currentBaseUrl = window.location.origin;
+
+        const response = await fetch("/api/export", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            html: htmlContent,
+            format: format,
+            width: ref.current.offsetWidth,
+            height: ref.current.offsetHeight,
+            baseUrl: currentBaseUrl,
+          }),
+        });
+
+        if (!response.ok) throw new Error("Server failed to generate the image.");
+
+        const blob = await response.blob();
+        triggerDownload(blob, filename, format);
+
+      } else {
+        const elementsToHide = ref.current.querySelectorAll(".export-hide");
+        const elementsToShow = ref.current.querySelectorAll(".export-show");
+        const scrollElements = ref.current.querySelectorAll(".overflow-y-auto, .overflow-x-auto, .custom-scrollbar");
+
+        elementsToHide.forEach((el) => el.style.setProperty("display", "none", "important"));
+        elementsToShow.forEach((el) => el.style.setProperty("display", "flex", "important"));
+        scrollElements.forEach((el) => el.style.setProperty("overflow", "hidden", "important"));
+
+        await new Promise((resolve) => setTimeout(resolve, 300));
+
+        const options = {
+          quality: 1.0,
+          pixelRatio: 2,
+          useCORS: true,
+          filter: (node) => !node.classList?.contains('export-hide')
+        };
+
+        const dataUrl = format === "jpg"
+          ? await toJpeg(ref.current, options)
+          : await toPng(ref.current, options);
+
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        triggerDownload(blob, filename, format);
+
+        elementsToHide.forEach((el) => el.style.removeProperty("display"));
+        elementsToShow.forEach((el) => el.style.removeProperty("display"));
+        scrollElements.forEach((el) => el.style.removeProperty("overflow"));
       }
-
-      if (!dataUrl || dataUrl === 'data:,') {
-        throw new Error("Failed to generate image. The output was empty.");
-      }
-
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.download = `${filename}.${format}`;
-      link.href = blobUrl;
-      link.click();
-
-      setTimeout(() => {
-        window.URL.revokeObjectURL(blobUrl);
-      }, 1000);
 
     } catch (error) {
-      console.dir(error);
-      console.error("Failed to export image:", error?.message || error);
-      alert("Your browser may have blocked the export due to memory limits. Try simplifying your design or exporting in smaller parts.");
+      console.error("Export Error:", error);
+      alert("Gagal mengekspor gambar. Cek konsol untuk detail.");
     } finally {
-      elementsToHide.forEach((el) => el.style.removeProperty("display"));
-      elementsToHide.forEach((el) => el.style.removeProperty("display"));
-      elementsToShow.forEach((el) => el.style.removeProperty("display"));
+      setIsExporting(false);
     }
   };
 
-  return { downloadImage };
+  const triggerDownload = (blob, filename, format) => {
+    const blobUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.download = `${filename}.${format}`;
+    link.href = blobUrl;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setTimeout(() => window.URL.revokeObjectURL(blobUrl), 1000);
+  };
+
+  return { downloadImage, isExporting };
 }

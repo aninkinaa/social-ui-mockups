@@ -48,5 +48,9 @@ export function usePhotoUpload(initialImage) {
         e.target.value = "";
     };
 
-    return { image, setImage, handleUpload };
+    const handleClear = () => {
+        setImage(""); 
+    };
+
+    return { image, setImage, handleUpload, handleClear };
 }
