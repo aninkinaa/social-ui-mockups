@@ -42,8 +42,8 @@
   --panel-muted: #27272a;
   --panel-border: #3f3f46;
 
-  --brand: #4f46e5;       
-  --brand-hover: #6366f1;
+  --brand: #db2777;
+  --brand-hover: #ec4899;
 }
 
 @theme inline {

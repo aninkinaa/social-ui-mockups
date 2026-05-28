@@ -51,7 +51,7 @@ export default function MessagesControlPanel({
 
                 {/* 2. IG Notes */}
                 <Section title="IG Notes" icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>}>
-                    <button onClick={handleAddNote} className="bg-indigo-600 hover:bg-indigo-500 w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm shadow-indigo-900/50 flex items-center justify-center gap-2 mb-2">
+                    <button onClick={handleAddNote} className="bg-brand hover:bg-brand-hover w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm shadow-brand/50 flex items-center justify-center gap-2 mb-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg> Add New Note
                     </button>
 
@@ -143,7 +143,7 @@ export default function MessagesControlPanel({
 
                 {/* 3. Messages List */}
                 <Section title="Direct Messages" icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z" /></svg>}>
-                    <button onClick={handleAddMsg} className="bg-indigo-600 hover:bg-indigo-500 w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm shadow-indigo-900/50 flex items-center justify-center gap-2 mb-2">
+                    <button onClick={handleAddMsg} className="bg-brand hover:bg-brand-hover w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm shadow-brand/50 flex items-center justify-center gap-2 mb-2">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg> Add Message
                     </button>
 
