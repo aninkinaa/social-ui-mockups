@@ -1,9 +1,9 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Sosial Media Fake Generator",
-  description: "Bikin fake chat buat seru-seruan",
-};
+  title: 'SocialUI | Pixel-Perfect Social Media Mockups',
+  description: 'Generate hyper-realistic social media mockups in seconds. Lightning fast, completely free, and runs entirely in your browser.',
+}
 
 export const viewport = {
   width: 'device-width',
