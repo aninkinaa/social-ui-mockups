@@ -10,37 +10,9 @@ export default function ControlPanel({
     addonData, setAddonData, repostPhoto,
     statusBar, 
     commentData, setCommentData, user1Photo, user2Photo, viewerPhoto,
-    commentSheet, 
     textLayer, 
     exportData 
 }) {
-    
-    const [dragIndex, setDragIndex] = useState(null);
-
-    const handleDragStart = (e, index) => {
-        setDragIndex(index);
-        if (e.dataTransfer) {
-            e.dataTransfer.effectAllowed = "move";
-            e.dataTransfer.setData("text/plain", index);
-        }
-    };
-
-    const handleDragEnter = (index) => {
-        if (dragIndex === null || dragIndex === index) return;
-        
-        const newComments = [...commentSheet.comments];
-        const draggedItem = newComments[dragIndex];
-        
-        newComments.splice(dragIndex, 1);
-        newComments.splice(index, 0, draggedItem);
-        
-        commentSheet.setComments(newComments);
-        setDragIndex(index);
-    };
-
-    const handleDragEnd = () => {
-        setDragIndex(null);
-    };
 
     return (
         <div className="w-full xl:w-[480px] bg-[#18181b] xl:border-l border-[#27272a] flex flex-col h-auto min-h-screen xl:h-screen relative shrink-0 z-20">
@@ -179,74 +151,6 @@ export default function ControlPanel({
                                 </div>
                             </div>
                         )}
-                    </div>
-
-                    <div className="border-t border-[#3f3f46]/50 pt-5 mt-2 flex flex-col gap-3">
-                        <Toggle 
-                            label="Show Comments List" 
-                            subLabel="Can also be opened via preview screen" 
-                            checked={commentSheet.isOpen} 
-                            onChange={() => commentSheet.setIsOpen(!commentSheet.isOpen)} 
-                        />
-                        
-                        {commentSheet.isOpen && (
-                            <div className="flex gap-3 p-3 bg-black/30 rounded-xl border border-white/5">
-                                <div className="flex flex-col gap-1.5 items-center shrink-0">
-                                    <label className="text-[10px] text-neutral-400">Viewer (You)</label>
-                                    <AvatarInput className="w-10 h-10" value={viewerPhoto.image} onChange={(base64) => viewerPhoto.setImage(base64)} />
-                                </div>
-                                <div className="flex-1 text-[11px] text-neutral-400 flex items-center leading-relaxed">
-                                    This avatar will be used in the comment input field at the bottom of the sheet.
-                                </div>
-                            </div>
-                        )}
-
-                        <button type="button" onClick={commentSheet.addComment} className="bg-indigo-600 hover:bg-indigo-500 w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all shadow-sm flex items-center justify-center gap-2 mt-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" /></svg> Add Comment
-                        </button>
-
-                        <div className="flex flex-col gap-2">
-                            {commentSheet.comments.map((c, index) => (
-                                <div 
-                                    key={c.id} 
-                                    draggable
-                                    onDragStart={(e) => handleDragStart(e, index)}
-                                    onDragEnter={() => handleDragEnter(index)}
-                                    onDragEnd={handleDragEnd}
-                                    onDragOver={(e) => e.preventDefault()}
-                                    className={`bg-[#18181b] p-3 rounded-xl border transition-colors ${commentSheet.activeId === c.id ? 'border-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.2)]' : 'border-[#3f3f46]/50'} ${dragIndex === index ? 'opacity-50' : ''}`}
-                                >
-                                    <div className="flex justify-between items-center cursor-pointer" onClick={() => commentSheet.setActiveId(commentSheet.activeId === c.id ? null : c.id)}>
-                                        <div className="flex items-center gap-2 overflow-hidden flex-1 pr-2">
-                                            <div className="text-neutral-500 cursor-grab active:cursor-grabbing hover:text-white px-1">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                                                </svg>
-                                            </div>
-                                            <span className="text-sm font-medium text-white truncate">{c.username || 'Username'} - {c.text}</span>
-                                        </div>
-                                        <div className="flex gap-1 shrink-0">
-                                            <button onClick={(e) => { e.stopPropagation(); commentSheet.removeComment(c.id); }} className="text-neutral-500 hover:text-red-400 p-1 hover:bg-red-500/10 rounded-md transition-colors ml-1">
-                                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {commentSheet.activeId === c.id && (
-                                        <div className="mt-3 flex flex-col gap-3 pt-3 border-t border-[#3f3f46]/50">
-                                            <div className="flex gap-3 items-start">
-                                                <AvatarInput className="w-12 h-12 mt-1" value={c.avatar} onChange={(base64) => commentSheet.updateComment(c.id, 'avatar', base64)} />
-                                                <div className="flex-1 flex flex-col gap-2">
-                                                    <Input value={c.username} onChange={(e) => commentSheet.updateComment(c.id, 'username', e.target.value)} placeholder="Username" />
-                                                    <textarea value={c.text} onChange={(e) => commentSheet.updateComment(c.id, 'text', e.target.value)} placeholder="Comment Text..." className="bg-[#18181b] border border-[#3f3f46] text-white text-sm rounded-lg px-3 py-2 outline-none focus:border-indigo-500 w-full min-h-[44px] resize-y" />
-                                                </div>
-                                            </div>
-                                            <Toggle label="Show 'Author' Badge" checked={c.isAuthor} onChange={() => commentSheet.updateComment(c.id, 'isAuthor', !c.isAuthor)} />
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
                     </div>
                 </Section>
 

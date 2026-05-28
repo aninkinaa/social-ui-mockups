@@ -6,7 +6,7 @@ import { useExport } from "@/hooks/useExport";
 import { useDraggable } from "@/hooks/useDraggable";
 import { useTextLayers } from "@/hooks/useTextLayers";
 import { usePhotoUpload } from "@/hooks/usePhotoUpload";
-import { initialHeader, initialAddon, initialFloatingComment, initialStoryComment, initialStatusBar } from "@/data/instagram";
+import { initialHeader, initialAddon, initialFloatingComment, initialStatusBar } from "@/data/instagram";
 
 const DEFAULT_PROFILE = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23666'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20 100 Q 50 60 80 100' fill='%23ccc'/%3E%3C/svg%3E";
 
@@ -37,24 +37,6 @@ export default function IGStory() {
     // === REFS ===
     const fileInputRef = useRef(null);
     const phoneFrameRef = useRef(null);
-
-    // === COMMENT SHEET ===
-    const [isCommentSheetOpen, setIsCommentSheetOpen] = useState(false);
-    const [storyComments, setStoryComments] = useState(initialStoryComment);
-    const [activeCommentId, setActiveCommentId] = useState(null);
-
-    const handleAddStoryComment = () => {
-        setStoryComments(prev => [
-            ...prev,
-            { id: Date.now(), username: "username", text: "New comment", isAuthor: false, avatar: DEFAULT_PROFILE }
-        ]);
-    };
-    const updateStoryComment = (id, field, value) => {
-        setStoryComments(prev => prev.map(c => (c.id === id ? { ...c, [field]: value } : c)));
-    };
-    const removeStoryComment = (id) => {
-        setStoryComments(prev => prev.filter(c => c.id !== id));
-    };
 
     const handleExportClick = async (format) => {
         if (isExporting || !phoneFrameRef.current) return;
@@ -344,10 +326,9 @@ export default function IGStory() {
                         </div>
                     </div>
 
-                    {comment.show && !isCommentSheetOpen && (
+                    {comment.show && (
                         <div
-                            onClick={() => setIsCommentSheetOpen(true)}
-                            className="absolute bottom-[90px] left-4 flex items-end gap-2 z-30 export-show px-4 py-2 cursor-pointer transition-transform hover:scale-[1.02] active:scale-95"
+                            className="absolute bottom-[90px] left-4 flex items-end gap-2 z-30 export-show px-4 py-2 transition-transform hover:scale-[1.02] active:scale-95"
                         >
                             <div className="relative shrink-0">
                                 <img src={user1Photo.image} className="w-[25px] h-[25px] rounded-full object-cover shadow-sm" alt="User 1" />
@@ -372,7 +353,7 @@ export default function IGStory() {
 
                             {!header.isCF && (
                                 <>
-                                    <button onClick={() => setIsCommentSheetOpen(true)} className="hover:scale-110 transition-transform cursor-pointer"><svg aria-label="Comment" className="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2"></path></svg></button>
+                                    <button className="hover:scale-110 transition-transform"><svg aria-label="Comment" className="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2"></path></svg></button>
                                     <button className="hover:scale-110 transition-transform"><svg aria-label="Messages" className="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24"><path d="M13.973 20.046 21.77 6.928C22.8 5.195 21.55 3 19.535 3H4.466C2.138 3 .984 5.825 2.646 7.456l4.842 4.752 1.723 7.121c.548 2.266 3.571 2.721 4.762.717Z" fill="none" stroke="currentColor" strokeLinejoin="round" strokeWidth="2"></path><line fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" x1="7.488" x2="15.515" y1="12.208" y2="7.641"></line></svg></button>
                                 </>
                             )}
@@ -381,65 +362,6 @@ export default function IGStory() {
                     <div className="h-[24px] bg-[#0F0F0F] flex justify-center items-end pb-2 w-full shrink-0 relative z-20">
                         <div className="w-[134px] h-[5px] bg-white rounded-full"></div>
                     </div>
-
-                    {isCommentSheetOpen && (
-                        <div className="absolute inset-0 z-[100] flex flex-col justify-end overflow-hidden export-show">
-
-                            <div className="absolute inset-0 bg-black/40 transition-opacity" onClick={() => setIsCommentSheetOpen(false)} />
-
-                            <div className="relative w-full rounded-t-[30px] flex flex-col z-10 min-h-[70%] max-h-[85%] pt-3 animate-in slide-in-from-bottom-10 duration-200 overflow-hidden bg-white/25 backdrop-blur-[45px]">
-                                <div className="relative z-10 flex flex-col w-full h-full">
-                                    <div className="w-[36px] h-[2px] bg-gray-400 rounded-full mx-auto mb-6 mt-0.5 shrink-0" />
-
-                                    {/* Comments List */}
-                                    <div
-                                        className="flex-1 overflow-y-auto px-4 custom-scrollbar flex flex-col gap-2 pb-2 relative z-10"
-                                        style={{
-                                            maskImage: "linear-gradient(to bottom, black 0%, black 82%, transparent 100%)",
-                                            WebkitMaskImage: "linear-gradient(to bottom, black 0%, black 82%, transparent 100%)"
-                                        }}
-                                    >
-                                        {storyComments.map((c) => (
-                                            <div key={c.id} className="flex gap-3 items-start">
-                                                <img src={c.avatar || DEFAULT_PROFILE} className="w-[34px] h-[34px] rounded-full object-cover shrink-0" />
-                                                <div className="flex flex-col mt-[2px]">
-                                                    <div className="flex items-center gap-1.5 leading-none mb-1">
-                                                        <span className="text-white/90 text-[12px] font-semibold">{c.username}</span>
-                                                        {c.isAuthor && (
-                                                            <div className="flex items-center gap-1.5">
-                                                                <div className="w-[2px] h-[2px] bg-[#a8a8a8] rounded-full" />
-                                                                <span className="text-[#a8a8a8] text-[12px]">Author</span>
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                    <span className="text-white text-[13px] leading-[1.3] whitespace-pre-wrap break-words pr-4">{renderCommentText(c.text)}</span>
-                                                    <span className="text-gray-400 text-[11px] font-semibold mt-1 cursor-pointer hover:text-white/80 transition-colors">Reply</span>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="shrink-0 flex flex-col p-4 pt-0 gap-2 bg-transparent">
-                                        <div className="flex justify-between items-center px-1">
-                                            {['❤️', '🙌', '🔥', '👏', '😢', '😍', '😮', '😂'].map(e => (
-                                                <span key={e} className="text-[24px] drop-shadow-md hover:scale-110 cursor-pointer transition-transform">{e}</span>
-                                            ))}
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <img src={viewerPhoto.image} className="w-[43px] h-[43px] rounded-full object-cover shrink-0 opacity-90" />
-                                            <div className="flex-1 h-[43px] rounded-full px-4 flex items-center bg-black/30">
-                                                <span className="text-white/60 text-[14px]">Add a comment or @mention friends...</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="h-[24px] flex justify-center items-end pb-2 pt-1 w-full shrink-0 relative z-20">
-                                        <div className="w-[134px] h-[5px] bg-white rounded-full"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
 
                 </div>
 
@@ -501,17 +423,6 @@ export default function IGStory() {
                     user1Photo={user1Photo}
                     user2Photo={user2Photo}
                     viewerPhoto={viewerPhoto}
-                    commentSheet={{
-                        isOpen: isCommentSheetOpen,
-                        setIsOpen: setIsCommentSheetOpen,
-                        comments: storyComments,
-                        setComments: setStoryComments,
-                        activeId: activeCommentId,
-                        setActiveId: setActiveCommentId,
-                        addComment: handleAddStoryComment,
-                        updateComment: updateStoryComment,
-                        removeComment: removeStoryComment
-                    }}
                     textLayer={textEditor}
                     exportData={{
                         downloadImage: (ref, format) => handleExportClick(format),
