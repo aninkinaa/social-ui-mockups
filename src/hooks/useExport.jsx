@@ -13,28 +13,43 @@ export function useExport() {
       const elementsToShow = ref.current.querySelectorAll(".export-show");
       const scrollElements = ref.current.querySelectorAll(".overflow-y-auto, .overflow-x-auto, .custom-scrollbar");
 
-      elementsToHide.forEach((el) => el.style.setProperty("display", "none", "important"));
-      elementsToShow.forEach((el) => el.style.setProperty("display", "flex", "important"));
-      scrollElements.forEach((el) => el.style.setProperty("overflow", "hidden", "important"));
+        elementsToHide.forEach((el) => el.style.setProperty("display", "none", "important"));
+        elementsToShow.forEach((el) => el.style.setProperty("display", "flex", "important"));
+        scrollElements.forEach((el) => el.style.setProperty("overflow", "hidden", "important"));
+
+        const images = Array.from(ref.current.querySelectorAll("img"));
+        await Promise.all(
+          images.map((img) => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.onload = resolve;
+              img.onerror = resolve;
+            });
+          })
+        );
 
       await new Promise((resolve) => setTimeout(resolve, 500));
 
-      const options = {
-        quality: 1.0,
-        pixelRatio: 4, 
-        useCORS: true,
-        cacheBust: true,
-        filter: (node) => {
-            if (node.classList && node.classList.contains('export-hide')) return false;
-            return true;
-        }
-      };
+        const options = {
+          quality: 1.0,
+          pixelRatio: 4,
+          useCORS: true,
+          cacheBust: true,
+          filter: (node) => !node.classList?.contains('export-hide')
+        };
 
-      await toPng(ref.current, options);
-      
-      const dataUrl = format === "jpg"
-        ? await toJpeg(ref.current, options)
-        : await toPng(ref.current, options);
+        try {
+          if (format === "jpg") {
+            await toJpeg(ref.current, options);
+          } else {
+            await toPng(ref.current, options);
+          }
+        } catch (e) {
+        }
+
+        const dataUrl = format === "jpg"
+          ? await toJpeg(ref.current, options)
+          : await toPng(ref.current, options);
 
       const response = await fetch(dataUrl);
       const blob = await response.blob();

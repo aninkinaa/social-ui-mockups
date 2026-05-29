@@ -20,7 +20,7 @@ export default function IGMessages() {
 
     // === HEADER & FOOTER STATE ===
     const [header, setHeader] = useState({
-        username: "hirono",
+        username: "username",
         profileImage: DEFAULT_AVATAR
     });
     const [footer, setFooter] = useState({ showBadge: true });
@@ -52,7 +52,7 @@ export default function IGMessages() {
                 <button onClick={() => setMobileTab("edit")} className={`flex-1 py-2.5 rounded-lg text-sm font-bold transition-all ${mobileTab === "edit" ? 'bg-indigo-600 text-white' : 'bg-[#27272a] text-gray-400'}`}>Edit Data</button>
             </div>
 
-            {/* === PHONE FRAME (Sekarang di kiri) === */}
+            {/* === PHONE FRAME === */}
             <div className={`flex-1 w-full justify-center items-center min-h-screen pt-[65px] xl:pt-10 pb-24 xl:pb-10 ${mobileTab === "preview" ? 'flex' : 'hidden xl:flex'}`}>
                 <div
                     className={
@@ -178,7 +178,7 @@ export default function IGMessages() {
                             </button>
                             <button className="p-2 cursor-pointer hover:opacity-70 transition-opacity">
                                 <div className="w-7 h-7 rounded-full bg-gray-200 overflow-hidden border border-gray-300">
-                                    <img src={header.profileImage} alt="Profile" className="w-full h-full object-cover" />
+                                    <img src={header.profileImage || DEFAULT_AVATAR } alt="Profile" className="w-full h-full object-cover" />
                                 </div>
                             </button>
                         </div>

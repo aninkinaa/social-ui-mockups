@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const compressImage = (file, maxSize = 1200) => {
+export const compressImage = (file, maxSize = 5000) => {
     return new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -26,7 +26,7 @@ export const compressImage = (file, maxSize = 1200) => {
                 if (file.type === "image/png") {
                     resolve(canvas.toDataURL("image/png"));
                 } else {
-                    resolve(canvas.toDataURL("image/jpeg", 0.95));
+                    resolve(canvas.toDataURL("image/jpeg", 1.0));
                 }
             };
             img.src = event.target.result;
