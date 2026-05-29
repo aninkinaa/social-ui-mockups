@@ -1,12 +1,12 @@
 const DEFAULT_PROFILE = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23666'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20 100 Q 50 60 80 100' fill='%23ccc'/%3E%3C/svg%3E";
 
 export const initialStatusBar = {
-    timeText: "9:41", 
-    batteryLevel: 85, 
-    signalBars: 3, 
-    showDynamicIsland: true, 
-    diWaveColor: "#ffffff",     
-    diPhotoUrl: "" 
+    timeText: "9:41",
+    batteryLevel: 85,
+    signalBars: 3,
+    showDynamicIsland: false,
+    diWaveColor: "#ffffff",
+    diPhotoUrl: ""
 };
 
 export const initialNotes = [
@@ -15,7 +15,7 @@ export const initialNotes = [
         username: "Your note",
         text: "It's so hot today!",
         music: null,
-        avatarUrl: "/staring.png",
+        avatarUrl: DEFAULT_PROFILE,
         showLocation: true,
         locationName: "Location off"
     },
@@ -24,97 +24,28 @@ export const initialNotes = [
         username: "mutual 1",
         text: "",
         music: null,
-        avatarUrl: "",
+        avatarUrl: DEFAULT_PROFILE,
         showLocation: true,
         locationName: "Somewhere in Italy"
     },
-    {
-        id: 3,
-        username: "mutual 2",
-        text: "",
-        music: {
-            title: "Shot My Baby",
-            artist: "Daniel Caesar"
-        },
-        lyric: {
-            current: `Singin' "Yes I shot my`,
-            next: `baby down that day"`
-        },
-
-        avatarUrl: "",
-        showLocation: false,
-        locationName: ""
-    },
-    {
-        id: 4,
-        username: "mutual 4",
-        text: "🥲",
-        music: {
-            title: "On The Drive Home",
-            artist: "NIKI"
-        },
-        avatarUrl: "",
-        showLocation: false,
-        locationName: ""
-    }
 ];
 
 export const initialMessages = [
     {
         id: 1,
-        username: "the_merchant",
-        message: "Sent a reel by @memezar",
+        username: "user",
+        message: "Sent a reel by @user2",
         time: "2m",
         isRead: false,
         ringType: "cf",
         storySeen: false,
-        avatar: "/merchant.png"
-    },
-    {
-        id: 2,
-        username: "persoo00n4",
-        message: "Are we still on for tonight? 🍻",
-        time: "15m",
-        isRead: true,
-        ringType: "sg",
-        storySeen: true,
-        avatar: "/persona.png"
-    },
-    {
-        id: 3,
-        username: "Sunny Doll",
-        message: "Liked a message",
-        time: "5h",
-        isRead: true,
-        ringType: "sg",
-        storySeen: false,
-        avatar: "/sunnydoll.png"
-    },
-    {
-        id: 4,
-        username: "pooramnesia",
-        message: "Sent an attachment",
-        time: "1d",
-        isRead: true,
-        ringType: "none",
-        storySeen: false,
-        avatar: "/amnesia.png"
-    },
-    {
-        id: 5,
-        username: "devilrAWWrry",
-        message: "why u havent pay ur BILLS.",
-        time: "1w",
-        isRead: false,
-        ringType: "none",
-        storySeen: false,
-        avatar: "/devilry.png"
+        avatar: DEFAULT_PROFILE
     }
 ];
 
 export const addNote = {
     id: Date.now,
-    username: "New Note",
+    username: "",
     text: "",
     music: null,
     lyric: null,
@@ -125,8 +56,8 @@ export const addNote = {
 
 export const addMessage = {
     id: Date.now(),
-    username: "New User",
-    message: "Hello",
+    username: "",
+    message: "",
     time: "1m",
     isRead: true,
     ringType: "none",
@@ -136,7 +67,7 @@ export const addMessage = {
 export const initialStoryComment = [
     {
         id: 1,
-        username: 'the_merchant',
+        username: 'user',
         text: 'LOL',
         isAuthor: true,
         avatar: DEFAULT_PROFILE
@@ -144,7 +75,7 @@ export const initialStoryComment = [
 
     {
         id: 2,
-        username: 'devilry',
+        username: 'user2',
         text: 'is it fr',
         isAuthor: false,
         avatar: DEFAULT_PROFILE
@@ -152,7 +83,7 @@ export const initialStoryComment = [
 ]
 
 export const initialHeader = {
-    username: "hirono",
+    username: "username",
     postedTime: "10h",
     storyCount: 3,
     currentStory: 1,
@@ -161,9 +92,9 @@ export const initialHeader = {
 
 export const initialAddon = {
     mode: "music", // 'none' | 'music' | 'repost'
-    musicArtist: "Day6",
-    musicTitle: "Days Gone By",
-    repostUsername: "_littlemischief",
+    musicArtist: "Artist",
+    musicTitle: "Title",
+    repostUsername: "_user",
 };
 
 export const initialFloatingComment = {
@@ -177,27 +108,71 @@ export const initialProfile = {
     nickname: "nickname",
     avatar: DEFAULT_PROFILE,
     note: "It's so hot today!",
-    pronouns: "she/her",
+    pronouns: "they/them",
     posts: "12",
     followers: "1.000",
     following: "50",
 }
 
 export const initialBio = {
-    text: "agent of change",
+    text: "This is bio text.",
     links: ["letterboxd.com/kinatofu", "id.pinterest.com/capablenough"],
     music: {
-        title: "gift",
-        artist: "suggi"
+        title: "Title",
+        artist: "Artist"
     }
 }
 
 export const initialFollowedBy = {
     show: true,
-    othersCount: "16",
+    othersCount: "2",
     users: [
-        { id: 1, avatar: DEFAULT_PROFILE, username: "9gag" },
-        { id: 2, avatar: DEFAULT_PROFILE, username: "dagelan" },
+        { id: 1, avatar: DEFAULT_PROFILE, username: "user" },
+        { id: 2, avatar: DEFAULT_PROFILE, username: "user" },
         { id: 3, avatar: "", username: "" }
     ]
 }
+
+export const initialPost = [
+    {
+        id: Date.now(),
+        avatar: DEFAULT_PROFILE,
+        username: "username",
+        isVerified: true,
+        audio: {
+            show: true,
+            isMuted: true,
+            artist: "Artist",
+            title: "Title"
+        },
+        image: DEFAULT_PROFILE,
+        aspectRatio: "portrait",
+        showTag: true,
+        slider: { show: true, showBadge: true, current: 1, total: 8 },
+        isLiked: false,
+        likes: "0",
+        comment: { show: true, count: "0" },
+        repost: { show: true, count: "" },
+        share: { show: true, count: "" },
+        likedBy: {
+            show: true,
+            users: [
+                { id: 1, avatar: DEFAULT_PROFILE, username: "someone" },
+                { id: 2, avatar: "", username: "" },
+                { id: 3, avatar: "", username: "" }
+            ],
+            othersCount: "others"
+        },
+        caption: { text: "", date: "1w" },
+        commentsList: [
+            {
+                id: 1, avatar: DEFAULT_PROFILE, username: "commenter_one", time: "1w", text: "nice post!", likes: "73", isLiked: false,
+                showInFeed: true,
+                visibleRepliesCount: 0,
+                replies: [
+                    { id: 11, avatar: DEFAULT_PROFILE, username: "reply_user_one", time: "1w", text: "agreed!", likes: "2", isLiked: false },
+                ]
+            }
+        ]
+    }
+]

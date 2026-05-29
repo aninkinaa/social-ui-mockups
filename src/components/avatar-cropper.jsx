@@ -84,7 +84,7 @@ export default function AvatarCropper({
 
     const handleSave = () => {
         if (canvasRef.current) {
-            const croppedBase64 = canvasRef.current.toDataURL("image/png");
+            const croppedBase64 = canvasRef.current.toDataURL("image/jpeg", 1.0);
             onSave(croppedBase64);
         }
     };

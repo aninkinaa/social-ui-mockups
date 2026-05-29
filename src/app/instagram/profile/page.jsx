@@ -4,8 +4,9 @@ import StatusBar from "@/components/status-bar";
 import React, { useState, useRef, useEffect } from "react";
 import { useExport } from "@/hooks/useExport";
 import { useArrayManager } from "@/hooks/useArrayManager";
-import FeedsControlPanel from "./control-panel";
+import ProfileControlPanel from "./control-panel";
 import { initialStatusBar, initialBio, initialFollowedBy, initialProfile } from "@/data/instagram";
+import renderTextWithMentions from "@/app/utils/renderTextWithMention";
 
 const DEFAULT_AVATAR = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Crect width='100' height='100' fill='%23666'/%3E%3Ccircle cx='50' cy='40' r='20' fill='%23ccc'/%3E%3Cpath d='M20 100 Q 50 60 80 100' fill='%23ccc'/%3E%3C/svg%3E";
 
@@ -22,11 +23,11 @@ export default function IGprofile() {
     const [followedBy, setFollowedBy] = useState(initialFollowedBy);
     const [tabs, setTabs] = useState({ reels: true, repost: true });
     const highlightsLayer = useArrayManager([
-        { id: 1, image: DEFAULT_AVATAR, title: ":v" }
+        { id: 1, image: DEFAULT_AVATAR, title: "Highlight" }
     ]);
 
     const postsLayer = useArrayManager(
-        Array(9).fill(null).map((_, i) => ({
+        Array(4).fill(null).map((_, i) => ({
             id: i + 1,
             image: "",
             isCarousel: i === 0
@@ -45,19 +46,6 @@ export default function IGprofile() {
             }
         }
     }, []);
-
-    const renderTextWithMentions = (text) => {
-        return text.split(/(@\w+)/g).map((part, index) => {
-            if (part.startsWith("@")) {
-                return (
-                    <span key={index} className="text-blue-600">
-                        {part}
-                    </span>
-                );
-            }
-            return <React.Fragment key={index}>{part}</React.Fragment>;
-        });
-    };
 
     const activeFollowedUsers = followedBy.users.filter(u => u.username.trim() !== "" || (u.avatar && u.avatar !== DEFAULT_AVATAR && u.avatar !== ""));
     const activeFollowedNames = followedBy.users.filter(u => u.username.trim() !== "");
@@ -351,7 +339,7 @@ export default function IGprofile() {
 
             {/* === CONTROL PANEL === */}
             <div className={`w-full xl:w-[480px] shrink-0 xl:h-screen xl:sticky xl:top-0 z-40 ${mobileTab === "edit" ? 'block' : 'hidden xl:block'}`}>
-                <FeedsControlPanel
+                <ProfileControlPanel
                     statusBar={{
                         ...deviceSettings,
                         setTimeText: (val) => setDeviceSettings(prev => ({ ...prev, timeText: val })),

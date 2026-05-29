@@ -59,14 +59,35 @@ export function useExport() {
         elementsToShow.forEach((el) => el.style.setProperty("display", "flex", "important"));
         scrollElements.forEach((el) => el.style.setProperty("overflow", "hidden", "important"));
 
+        const images = Array.from(ref.current.querySelectorAll("img"));
+        await Promise.all(
+          images.map((img) => {
+            if (img.complete) return Promise.resolve();
+            return new Promise((resolve) => {
+              img.onload = resolve;
+              img.onerror = resolve;
+            });
+          })
+        );
+
         await new Promise((resolve) => setTimeout(resolve, 300));
 
         const options = {
           quality: 1.0,
-          pixelRatio: 2,
+          pixelRatio: 4,
           useCORS: true,
+          cacheBust: true,
           filter: (node) => !node.classList?.contains('export-hide')
         };
+
+        try {
+          if (format === "jpg") {
+            await toJpeg(ref.current, options);
+          } else {
+            await toPng(ref.current, options);
+          }
+        } catch (e) {
+        }
 
         const dataUrl = format === "jpg"
           ? await toJpeg(ref.current, options)

@@ -66,7 +66,7 @@ const NoteItem = ({
                     <div className="relative flex flex-col items-start w-max">
 
                         {/* Main Bubble */}
-                        <div className={`relative flex flex-col z-20 w-fit ${bubbleMaxWidth || 'max-w-25'}`}>
+                        <div className={`relative flex flex-col z-20 w-fit ${bubbleMaxWidth || 'max-w-24'}`}>
 
                             <div className="absolute inset-0 bg-white rounded-[15px] border border-gray-50 z-0 transform-gpu" style={{ filter: "drop-shadow(0px 3px 4px rgba(0, 0, 0, 0.13))" }}></div>
 
@@ -99,17 +99,17 @@ const NoteItem = ({
                                                     }}
                                                 >
                                                     <div className="whitespace-nowrap flex">
-                                                        <span className="marquee-text block text-[10px] font-bold text-black pr-8 leading-none">
+                                                        <span className="marquee-text block text-[11px] font-bold text-black pr-8 leading-tight">
                                                             {music.title}
                                                         </span>
-                                                        <span className="marquee-text block text-[10px] font-bold text-black leading-none">
+                                                        <span className="marquee-text block text-[11px] font-bold text-black leading-tight">
                                                             {music.title}
                                                         </span>
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <div className="relative overflow-hidden">
-                                                    <div className="block leading-none text-[10px] font-bold text-black truncate max-w-full align-middle">
+                                                    <div className="block leading-tight text-[11px] font-bold text-black truncate max-w-full align-middle">
                                                         {music.title}
                                                     </div>
                                                 </div>
@@ -127,8 +127,8 @@ const NoteItem = ({
                                 {text && (() => {
                                     const { clampClass, maxH } = getTextClasses();
                                     return (
-                                        <div className={`text-[11px] font-medium text-[#262626] leading-none text-center overflow-hidden w-full ${maxH}`}>
-                                            <p ref={textRef} className={`${clampClass} break-words`}>
+                                        <div className={`text-[11px] font-medium text-[#262626] text-center overflow-hidden w-full ${maxH}`}>
+                                            <p ref={textRef} className={`${clampClass} break-words leading-tight`}>
                                                 {renderTextWithMentions(text)}
                                             </p>
                                         </div>

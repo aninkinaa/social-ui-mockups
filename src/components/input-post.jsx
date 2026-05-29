@@ -1,8 +1,20 @@
 import React, { useState } from "react";
 import AvatarCropper from "./avatar-cropper"; 
 
-export default function InputPost({ value, onChange, className = "w-full aspect-[130/171]" }) {
+export default function InputPost({ value, onChange, aspectRatio = "grid", className = "" }) {
     const [rawImage, setRawImage] = useState(null);
+
+    let cropW = 260;
+    let cropH = 342;
+    let ratioClass = "aspect-[130/171]";
+
+    if (aspectRatio === "square") {
+        cropW = 1080; cropH = 1080; ratioClass = "aspect-square";
+    } else if (aspectRatio === "landscape") {
+        cropW = 1080; cropH = 566; ratioClass = "aspect-[1080/566]";
+    } else if (aspectRatio === "portrait") {
+        cropW = 1080; cropH = 1440; ratioClass = "aspect-[3/4]";
+    }
 
     const handleFileSelect = (e) => {
         const file = e.target.files[0];
@@ -21,14 +33,13 @@ export default function InputPost({ value, onChange, className = "w-full aspect-
 
     const handleRemove = (e) => {
         e.preventDefault(); 
-        e.stopPropagation(); // Biar pas klik remove, gak ngebuka galeri
+        e.stopPropagation();
         onChange(""); 
     };
 
     return (
         <>
-            {/* Tambahin overflow-hidden di container terluar biar bar remove-nya rapi di bawah */}
-            <div className={`relative shrink-0 overflow-hidden rounded-md border-2 border-[#3f3f46] group ${className}`}>
+            <div className={`relative shrink-0 overflow-hidden rounded-md border-2 border-[#3f3f46] group w-full transition-all duration-300 ${ratioClass} ${className}`}>
                 
                 <label className="relative z-10 w-full h-full cursor-pointer block bg-[#27272a] hover:bg-[#3f3f46] transition-colors">
                     {value ? (
@@ -68,8 +79,8 @@ export default function InputPost({ value, onChange, className = "w-full aspect-
                     imageSrc={rawImage}
                     onSave={handleSaveCrop}
                     onCancel={() => setRawImage(null)}
-                    cropWidth={260}
-                    cropHeight={342}
+                    cropWidth={cropW}
+                    cropHeight={cropH}
                     isCircular={false}
                 />
             )}

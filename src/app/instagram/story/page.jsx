@@ -278,7 +278,7 @@ export default function IGStory() {
                                 <div className="flex items-center justify-between w-full">
                                     <div className="flex items-center gap-3 p-0">
                                         <div className="w-[32px] h-[32px] rounded-full overflow-hidden p-0 shrink-0 bg-neutral-800 flex items-center justify-center cursor-grab active:cursor-grabbing pointer-events-auto" {...profileEditor.handlers}>
-                                            <img src={profilePhoto.image} alt="Avatar" className="w-full h-full object-cover transition-transform duration-200" style={{ transform: `scale(${profileEditor.scale}) translate(${profileEditor.position.x}px, ${profileEditor.position.y}px)` }} draggable={false} />
+                                            <img src={profilePhoto.image || DEFAULT_PROFILE } alt="Avatar" className="w-full h-full object-cover transition-transform duration-200" style={{ transform: `scale(${profileEditor.scale}) translate(${profileEditor.position.x}px, ${profileEditor.position.y}px)` }} draggable={false} />
                                         </div>
                                         <div className="flex flex-col justify-center">
                                             <div className="flex items-center gap-2 drop-shadow-md leading-none">
@@ -350,8 +350,8 @@ export default function IGStory() {
                             className="absolute bottom-[90px] left-4 flex items-end gap-2 z-30 export-show px-4 py-2 cursor-pointer transition-transform hover:scale-[1.02] active:scale-95"
                         >
                             <div className="relative shrink-0">
-                                <img src={user1Photo.image} className="w-[25px] h-[25px] rounded-full object-cover shadow-sm" alt="User 1" />
-                                <img src={user2Photo.image || viewerPhoto.image} className="w-[12px] h-[12px] rounded-full absolute -top-3 -left-1 object-cover shadow-sm" alt="User 2" />
+                                <img src={user1Photo.image || DEFAULT_PROFILE } className="w-[25px] h-[25px] rounded-full object-cover shadow-sm" alt="User 1" />
+                                <img src={user2Photo.image || DEFAULT_PROFILE } className="w-[12px] h-[12px] rounded-full absolute -top-3 -left-1 object-cover shadow-sm" alt="User 2" />
                             </div>
                             <div className="relative max-w-[260px] mb-[5px]">
                                 <div className="absolute inset-0 backdrop-blur-lg rounded-[20px] z-0"></div>
