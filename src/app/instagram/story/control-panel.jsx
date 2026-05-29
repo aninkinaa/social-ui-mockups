@@ -189,7 +189,7 @@ export default function ControlPanel({
                         )}
                     </div>
 
-                    <div className="border-t border-[#3f3f46]/50 pt-5 mt-2 flex flex-col gap-3">
+                    {/* <div className="border-t border-[#3f3f46]/50 pt-5 mt-2 flex flex-col gap-3">
                         <Toggle 
                             label="Show Comments List" 
                             subLabel="Can also be opened via preview screen" 
@@ -255,7 +255,7 @@ export default function ControlPanel({
                                 </div>
                             ))}
                         </div>
-                    </div>
+                    </div> */}
                 </Section>
 
                 <div className="h-px w-full bg-[#27272a]"></div>
